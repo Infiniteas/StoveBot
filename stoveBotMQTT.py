@@ -1,12 +1,16 @@
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
+import os
+
 from stoveBotCV import *
 
 BROKER = "mqtt.eclipse.org"
 IMAGE_MQTT_TOPIC = "eecs106a/stovebot/images"
 LEFT_ANGLE_MQTT_TOPIC = "eecs106a/stovebot/leftAngle"
 RIGHT_ANGLE_MQTT_TOPIC = "eecs106a/stovebot/rightAngle"
+
+TMP_IMAGE = "/tmp/stovebot_tmp_img.jpg"
 
 def publishLeftAngle(window):
 	angle = window.getLeftAngle()
@@ -25,13 +29,17 @@ def startCVSubscriber(windowToUpdate):
 
 	def on_message(client, userdata, msg):
 		#print("Message received from " + msg.topic + " -> " + str(msg.payload))
-		leftAngle, rightAngle = cv_test("test string")
+		f = open(TMP_IMAGE, "w+b")
+		f.write(msg.payload)
+		f.close()
 
-		nonlocal test
-		if (test % 4 == 0):
-			leftAngle = 0
-			rightAngle = 30
-		test += 1
+		leftAngle, rightAngle = cv_real(TMP_IMAGE)
+
+		# nonlocal test
+		# if (test % 4 == 0):
+		# 	leftAngle = 0
+		# 	rightAngle = 30
+		# test += 1
 
 		windowToUpdate.updateLeftDial.emit(leftAngle)
 		windowToUpdate.updateRightDial.emit(rightAngle)
@@ -46,3 +54,4 @@ def startCVSubscriber(windowToUpdate):
 
 def stopCVSubscriber(client):
 	client.loop_stop()
+	os.remove(TMP_IMAGE)

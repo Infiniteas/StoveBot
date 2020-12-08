@@ -14,9 +14,9 @@ def cv_test(test):
     print(test)
     return np.random.randint(0, 360), np.random.randint(0, 360)
 
-def cv_real():
+def cv_real(input_img):
     # read the input image
-    img_rot = cv2.imread("./images/double4.jpg")
+    img_rot = cv2.imread(input_img)
 
     #     *********************************    
     #     *                               *
@@ -24,7 +24,7 @@ def cv_real():
     #     *                               *
     #     *********************************
 
-    img = cv2.imread("./images/double4.jpg", cv2.IMREAD_COLOR) 
+    img = cv2.imread(input_img, cv2.IMREAD_COLOR) 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     output = img.copy()
 
@@ -138,3 +138,5 @@ def cv_real():
     # NOTE: Degrees: positive rotate counter-clockwise, negative rotate clockwise
     print("degree left: ", degree_left)
     print("degree right: " , degree_right)
+
+    return int(degree_left), int(degree_right)
