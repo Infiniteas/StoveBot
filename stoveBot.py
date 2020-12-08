@@ -15,6 +15,9 @@ class StoveBotWindow(QMainWindow):
 	updateLeftDial = pyqtSignal(int)
 	updateRightDial = pyqtSignal(int)
 
+	currLeftAngle = 0
+	currRightAngle = 0
+
 	def __init__(self, *args, **kwargs):
 		super(StoveBotWindow, self).__init__(*args, **kwargs)
 
@@ -35,14 +38,14 @@ class StoveBotWindow(QMainWindow):
 		# Dial off buttons
 		self.leftButton = QPushButton()
 		self.leftButton.setText("Turn Off")
+		self.leftButton.clicked.connect(lambda : publishLeftAngle(self))
 		self.leftButton.clicked.connect(lambda : self.rotateLeftDial(0))
-		self.leftButton.clicked.connect(lambda : publishLeftAngle(0))
 		self.leftButton.hide()
 
 		self.rightButton = QPushButton()
 		self.rightButton.setText("Turn Off")
+		self.rightButton.clicked.connect(lambda : publishRightAngle(self))
 		self.rightButton.clicked.connect(lambda : self.rotateRightDial(0))
-		self.rightButton.clicked.connect(lambda : publishRightAngle(0))
 		self.rightButton.hide()
 
 		# Dials
@@ -83,6 +86,7 @@ class StoveBotWindow(QMainWindow):
 
 	def rotateLeftDial(self, angle):
 		self.__rotateDial(self.leftDial, angle)
+		self.currLeftAngle = angle
 		if (angle == 0):
 			self.leftButton.hide()
 			self.leftStatus.setText("OFF")
@@ -92,12 +96,19 @@ class StoveBotWindow(QMainWindow):
 
 	def rotateRightDial(self, angle):
 		self.__rotateDial(self.rightDial, angle)
+		self.currRightAngle = angle
 		if (angle == 0):
 			self.rightButton.hide()
 			self.rightStatus.setText("OFF")
 		else:
 			self.rightButton.show()
 			self.rightStatus.setText("ON")
+
+	def getLeftAngle(self):
+		return self.currLeftAngle
+
+	def getRightAngle(self):
+		return self.currRightAngle
 
 def main():
 	app = QApplication(sys.argv)

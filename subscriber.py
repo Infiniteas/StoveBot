@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code {0}".format(str(rc)))
-    client.subscribe("eecs106a/stovebot/leftAngle")
+    client.subscribe("eecs106a/stovebot/rightAngle")
 
 def on_message(client, userdata, msg):
     print("Message received from " + msg.topic + " -> " + str(msg.payload))

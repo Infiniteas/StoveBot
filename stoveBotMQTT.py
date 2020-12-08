@@ -8,10 +8,12 @@ IMAGE_MQTT_TOPIC = "eecs106a/stovebot/images"
 LEFT_ANGLE_MQTT_TOPIC = "eecs106a/stovebot/leftAngle"
 RIGHT_ANGLE_MQTT_TOPIC = "eecs106a/stovebot/rightAngle"
 
-def publishLeftAngle(angle):
+def publishLeftAngle(window):
+	angle = window.getLeftAngle()
 	publish.single(LEFT_ANGLE_MQTT_TOPIC, angle, hostname=BROKER)
 
-def publishRightAngle(angle):
+def publishRightAngle(window):
+	angle = window.getRightAngle()
 	publish.single(RIGHT_ANGLE_MQTT_TOPIC, angle, hostname=BROKER)
 
 def startCVSubscriber(windowToUpdate):
