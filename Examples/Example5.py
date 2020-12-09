@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Dec  8 10:42:00 2020
+Created on Mon Dec  7 23:39:48 2020
 
 @author: Jasmine Anica
-
-This program finds the angle of a zero-pitch twist
-
-Use a filter to find the "base" and "rotated" points on the gears along with 
-with each gears origin. The filter picks up on the blue and green tag positions 
-in the base image and the rotated image. Using OpenCV functions, I can calculate the 
-centor of the filtered shapes. Take the difference of the points relative to 
-their origin and find the angles that way.
-
-For Bernard: You only need the bottom values: degree_left and degree_right   
 """
 import cv2
 import math
@@ -69,6 +59,17 @@ res_base_blue = cv2.cvtColor(res_base_blue, cv2.COLOR_BGR2RGB)
 res_base_green = cv2.bitwise_and(img_base,img_base, mask=mask_base_green)
 res_base_green = cv2.cvtColor(res_base_green, cv2.COLOR_BGR2RGB)
 
+# make copys of the results to display them
+filtered_base_blue = res_base_blue.copy()
+filtered_base_green = res_base_green.copy()
+
+plt.title("Filtered Base Blue")
+plt.axis('off')
+plt.imshow(filtered_base_blue),plt.show()
+plt.title("Filtered Base Green")
+plt.axis('off')
+plt.imshow(filtered_base_green),plt.show()
+
 ############## ROTATED POINTS ################
 
 img_rot_hsv = cv2.cvtColor(img_rot, cv2.COLOR_BGR2HSV)
@@ -104,6 +105,16 @@ res_rot_blue = cv2.cvtColor(res_rot_blue, cv2.COLOR_BGR2RGB)
 res_rot_green = cv2.bitwise_and(img_rot,img_rot, mask=mask_rot_green)
 res_rot_green = cv2.cvtColor(res_rot_green, cv2.COLOR_BGR2RGB)
 
+# make copys of the results to display them
+filtered_rot_blue = res_rot_blue.copy()
+filtered_rot_green = res_rot_green.copy()
+
+plt.title("Filtered Rot Blue")
+plt.axis('off')
+plt.imshow(filtered_rot_blue),plt.show()
+plt.title("Filtered Rot Green")
+plt.axis('off')
+plt.imshow(filtered_rot_green),plt.show()
 
 #     *********************************    
 #     *                               *
@@ -133,6 +144,10 @@ res_base_orange = cv2.cvtColor(res_base_orange, cv2.COLOR_BGR2RGB)
 # make copys of the results to display them
 filtered_base_orange = res_base_orange.copy()
 
+plt.title("Filtered Base Orange")
+plt.axis('off')
+plt.imshow(filtered_base_orange),plt.show()
+
 #     *********************************    
 #     *                               *
 #     *    Finds Center of Base       *
@@ -156,6 +171,8 @@ if M["m00"] != 0:
  cY = int(M["m01"] / M["m00"])
 else:
  cX, cY = 0, 0
+cv2.circle(img_base, (cX, cY), 2, (255, 255, 255), 2)
+cv2.putText(img_base, "base_l", (cX - 15, cY - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 base_pt_l = np.array([cX, cY, 1])
 
 # Calculate the center of the shape after filter is applied
@@ -175,6 +192,8 @@ if M["m00"] != 0:
  cY = int(M["m01"] / M["m00"])
 else:
  cX, cY = 0, 0
+cv2.circle(img_base, (cX, cY), 2, (255, 255, 255), 2)
+cv2.putText(img_base, "base_r", (cX - 15, cY - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 base_pt_r = np.array([cX, cY, 1])
 
 
@@ -201,6 +220,10 @@ if M["m00"] != 0:
  cY = int(M["m01"] / M["m00"])
 else:
  cX, cY = 0, 0
+#cv2.circle(img_base, (cX, cY), 2, (255, 255, 255), 2)
+#cv2.putText(img_base, "rot_l", (cX - 15, cY - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+cv2.circle(img_rot, (cX, cY), 2, (255, 255, 255), 2)
+cv2.putText(img_rot, "rot_l", (cX - 15, cY - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 rot_pt_l = np.array([cX, cY, 1])
 
 
@@ -221,6 +244,10 @@ if M["m00"] != 0:
  cY = int(M["m01"] / M["m00"])
 else:
  cX, cY = 0, 0
+#cv2.circle(img_base, (cX, cY), 2, (255, 255, 255), 2)
+#cv2.putText(img_base, "rot_r", (cX - 15, cY - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+cv2.circle(img_rot, (cX, cY), 2, (255, 255, 255), 2)
+cv2.putText(img_rot, "rot_l", (cX - 15, cY - 15),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 rot_pt_r = np.array([cX, cY, 1])
 
 #     *********************************    
@@ -256,6 +283,18 @@ for c in contours_base:
         origin_r = np.array([cX, cY, 1])
         cv2.putText(img_base, "origin_r", (cX - 20, cY - 10),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 
+# convert from BGR to RGB so we can plot using matplotlib
+img_base = cv2.cvtColor(img_base, cv2.COLOR_BGR2RGB)
+plt.title("Base Points")
+plt.axis('off')
+plt.imshow(img_base),plt.show()
+
+# convert from BGR to RGB so we can plot using matplotlib
+img_rot = cv2.cvtColor(img_rot, cv2.COLOR_BGR2RGB)
+plt.title("Rot Points")
+plt.axis('off')
+plt.imshow(img_rot),plt.show()
+
 #     *********************************    
 #     *                               *
 #     *       Calculates Angle        *
@@ -283,4 +322,8 @@ theta = math.atan2(y, x)
 degree_right = np.rad2deg(theta)
 degree_right = '%1.0f' % (degree_right)
 print("degree right: ", degree_right)
+
+
+
+
 
