@@ -6,7 +6,7 @@ import os.path
 
 import paho.mqtt.publish as publish
 
-BROKER = "mqtt.eclipse.org"
+BROKER = "broker.hivemq.com"
 MQTT_TOPIC = "eecs106a/stovebot/images"
 
 def help():

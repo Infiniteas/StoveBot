@@ -5,20 +5,21 @@ import os
 
 from stoveBotCV import *
 
-BROKER = "mqtt.eclipse.org"
+BROKER = "broker.hivemq.com"
 IMAGE_MQTT_TOPIC = "eecs106a/stovebot/images"
-LEFT_ANGLE_MQTT_TOPIC = "eecs106a/stovebot/leftAngle"
-RIGHT_ANGLE_MQTT_TOPIC = "eecs106a/stovebot/rightAngle"
+ANGLE_MQTT_TOPIC = "stoveBot/project/motor"
 
 TMP_IMAGE = "/tmp/stovebot_tmp_img.jpg"
 
 def publishLeftAngle(window):
 	angle = window.getLeftAngle()
-	publish.single(LEFT_ANGLE_MQTT_TOPIC, angle, hostname=BROKER)
+	print("Turning off left stove with angle=" + str(angle) + "\n")
+	publish.single(ANGLE_MQTT_TOPIC, str(angle) + ",0", hostname=BROKER)
 
 def publishRightAngle(window):
 	angle = window.getRightAngle()
-	publish.single(RIGHT_ANGLE_MQTT_TOPIC, angle, hostname=BROKER)
+	print("Turning off right stove with angle=" + str(angle) + "\n")
+	publish.single(ANGLE_MQTT_TOPIC, "0," + str(angle), hostname=BROKER)
 
 def startCVSubscriber(windowToUpdate):
 	test = 0
@@ -33,13 +34,9 @@ def startCVSubscriber(windowToUpdate):
 		f.write(msg.payload)
 		f.close()
 
-		leftAngle, rightAngle = cv_real(TMP_IMAGE)
-
-		# nonlocal test
-		# if (test % 4 == 0):
-		# 	leftAngle = 0
-		# 	rightAngle = 30
-		# test += 1
+		leftAngle, rightAngle = cv_angles(TMP_IMAGE)
+		print("Received image, CV returned left angle=" + str(leftAngle) +
+			" right angle=" + str(rightAngle) + "\n")
 
 		windowToUpdate.updateLeftDial.emit(leftAngle)
 		windowToUpdate.updateRightDial.emit(rightAngle)
@@ -54,4 +51,5 @@ def startCVSubscriber(windowToUpdate):
 
 def stopCVSubscriber(client):
 	client.loop_stop()
-	os.remove(TMP_IMAGE)
+	if os.path.exists(TMP_IMAGE):
+		os.remove(TMP_IMAGE)
