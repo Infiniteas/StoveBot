@@ -1,3 +1,11 @@
+"""
+stoveBotMQTT.py
+Author: Bernard Chen
+Provides MQTT functionality for the stoveBot project. Appropriately calls
+CV code when image data is received and provides callbacks to publish
+angles to MQTT as well.
+"""
+
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
@@ -13,13 +21,25 @@ TMP_IMAGE = "/tmp/stovebot_tmp_img.jpg"
 
 def publishLeftAngle(window):
 	angle = window.getLeftAngle()
+
+	# Convert to what hardware is expecting (degrees to turn clockwise to 0)
+	if (angle > 0):
+		angle -= 360
+	angle *= -1
+
 	print("Turning off left stove with angle=" + str(angle) + "\n")
-	publish.single(ANGLE_MQTT_TOPIC, str(angle) + ",0", hostname=BROKER)
+	publish.single(ANGLE_MQTT_TOPIC, "0," + str(angle), hostname=BROKER)
 
 def publishRightAngle(window):
 	angle = window.getRightAngle()
+
+	# Convert to what hardware is expecting (degrees to turn clockwise to 0)
+	if (angle > 0):
+		angle -= 360
+	angle *= -1
+
 	print("Turning off right stove with angle=" + str(angle) + "\n")
-	publish.single(ANGLE_MQTT_TOPIC, "0," + str(angle), hostname=BROKER)
+	publish.single(ANGLE_MQTT_TOPIC, str(angle) + ",0", hostname=BROKER)
 
 def startCVSubscriber(windowToUpdate):
 	test = 0
@@ -34,9 +54,9 @@ def startCVSubscriber(windowToUpdate):
 		f.write(msg.payload)
 		f.close()
 
-		leftAngle, rightAngle = cv_angles(TMP_IMAGE)
-		print("Received image, CV returned left angle=" + str(leftAngle) +
-			" right angle=" + str(rightAngle) + "\n")
+		leftAngle, rightAngle = cvAngles(TMP_IMAGE)
+		print("Received image, CV returned left_angle=" + str(leftAngle) +
+			" right_angle=" + str(rightAngle) + "\n")
 
 		windowToUpdate.updateLeftDial.emit(leftAngle)
 		windowToUpdate.updateRightDial.emit(rightAngle)

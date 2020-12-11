@@ -1,3 +1,9 @@
+"""
+stoveBot.py
+Author: Bernard Chen
+Main stoveBot GUI application. Utilizes stoveBotMQTT.py and stoveBotCV.py
+"""
+
 import sys
 import time
 

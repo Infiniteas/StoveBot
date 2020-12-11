@@ -11,7 +11,7 @@ import numpy as np
 
 BASE_IMG_PATH = "./Examples/images/stovebot-base.jpg"
 
-def cv_angles(image_path):
+def cvAngles(image_path):
 	# read the input image
 	img_base = cv2.imread(BASE_IMG_PATH)
 	img_rot = cv2.imread(image_path)
@@ -313,7 +313,7 @@ def cv_angles(image_path):
 	x = np.dot(u_pt_l, v_pt_l)
 	theta = math.atan2(y, x)
 	degree_left = np.rad2deg(theta)
-	degree_left = '%1.0f' % (degree_left)
+	#degree_left = '%1.0f' % (degree_left)
 
 	u_pt_r = base_pt_r - origin_r
 	v_pt_r = rot_pt_r - origin_r
@@ -322,6 +322,6 @@ def cv_angles(image_path):
 	x = np.dot(u_pt_r, v_pt_r)
 	theta = math.atan2(y, x)
 	degree_right = np.rad2deg(theta)
-	degree_right = '%1.0f' % (degree_right)
+	#degree_right = '%1.0f' % (degree_right)
 
 	return (int) (degree_left), (int) (degree_right)
